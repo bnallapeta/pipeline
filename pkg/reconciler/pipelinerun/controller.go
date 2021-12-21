@@ -23,12 +23,8 @@ import (
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline"
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	pipelineclient "github.com/tektoncd/pipeline/pkg/client/injection/client"
-	conditioninformer "github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1alpha1/condition"
 	runinformer "github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1alpha1/run"
-	clustertaskinformer "github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1beta1/clustertask"
-	pipelineinformer "github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1beta1/pipeline"
 	pipelineruninformer "github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1beta1/pipelinerun"
-	taskinformer "github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1beta1/task"
 	taskruninformer "github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1beta1/taskrun"
 	pipelinerunreconciler "github.com/tektoncd/pipeline/pkg/client/injection/reconciler/pipeline/v1beta1/pipelinerun"
 	resourceinformer "github.com/tektoncd/pipeline/pkg/client/resource/injection/informers/resource/v1alpha1/pipelineresource"
@@ -50,12 +46,12 @@ func NewController(opts *pipeline.Options) func(context.Context, configmap.Watch
 		pipelineclientset := pipelineclient.Get(ctx)
 		taskRunInformer := taskruninformer.Get(ctx)
 		runInformer := runinformer.Get(ctx)
-		taskInformer := taskinformer.Get(ctx)
-		clusterTaskInformer := clustertaskinformer.Get(ctx)
+		//taskInformer := taskinformer.Get(ctx)
+		//clusterTaskInformer := clustertaskinformer.Get(ctx)
 		pipelineRunInformer := pipelineruninformer.Get(ctx)
-		pipelineInformer := pipelineinformer.Get(ctx)
+		//pipelineInformer := pipelineinformer.Get(ctx)
 		resourceInformer := resourceinformer.Get(ctx)
-		conditionInformer := conditioninformer.Get(ctx)
+		//conditionInformer := conditioninformer.Get(ctx)
 		configStore := config.NewStore(logger.Named("config-store"), pipelinerunmetrics.MetricsOnStore(logger))
 		configStore.WatchConfigs(cmw)
 
@@ -64,16 +60,16 @@ func NewController(opts *pipeline.Options) func(context.Context, configmap.Watch
 			PipelineClientSet: pipelineclientset,
 			Images:            opts.Images,
 			pipelineRunLister: pipelineRunInformer.Lister(),
-			pipelineLister:    pipelineInformer.Lister(),
-			taskLister:        taskInformer.Lister(),
-			clusterTaskLister: clusterTaskInformer.Lister(),
-			taskRunLister:     taskRunInformer.Lister(),
-			runLister:         runInformer.Lister(),
-			resourceLister:    resourceInformer.Lister(),
-			conditionLister:   conditionInformer.Lister(),
-			cloudEventClient:  cloudeventclient.Get(ctx),
-			metrics:           pipelinerunmetrics.Get(ctx),
-			pvcHandler:        volumeclaim.NewPVCHandler(kubeclientset, logger),
+			//pipelineLister:    pipelineInformer.Lister(),
+			//taskLister:        taskInformer.Lister(),
+			//clusterTaskLister: clusterTaskInformer.Lister(),
+			taskRunLister:  taskRunInformer.Lister(),
+			runLister:      runInformer.Lister(),
+			resourceLister: resourceInformer.Lister(),
+			//conditionLister:   conditionInformer.Lister(),
+			cloudEventClient: cloudeventclient.Get(ctx),
+			metrics:          pipelinerunmetrics.Get(ctx),
+			pvcHandler:       volumeclaim.NewPVCHandler(kubeclientset, logger),
 		}
 		impl := pipelinerunreconciler.NewImpl(ctx, c, func(impl *controller.Impl) controller.Options {
 			return controller.Options{
