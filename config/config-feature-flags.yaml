@@ -63,7 +63,7 @@ data:
   # option to false can lead to unexpected behavior.
   #
   # See https://github.com/tektoncd/pipeline/issues/2080 for more info.
-  running-in-environment-with-injected-sidecars: "false"
+  running-in-environment-with-injected-sidecars: "true"
   # Setting this flag to "true" will require that any Git SSH Secret
   # offered to Tekton must have known_hosts included.
   #
